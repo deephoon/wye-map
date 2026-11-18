@@ -1,0 +1,72 @@
+{
+ "name": "manufacturing-ai",
+ "description": "제조 AI·스마트공장 컨설팅 — general에 설비·공정 낱말과 단위, AI 적용 판정을 더함",
+ "extends": "general",
+ "triage": {
+  "core": [
+   "태그",
+   "메모리\\s*맵",
+   "설비",
+   "공정",
+   "레시피",
+   "tag\\s*list",
+   "memory\\s*map",
+   "recipe"
+  ]
+ },
+ "signals": [
+  "불량",
+  "설비",
+  "레시피",
+  "라벨",
+  "PLC",
+  "MES",
+  "defect",
+  "yield",
+  "label"
+ ],
+ "units": [
+  "호기",
+  "㎛",
+  "µm",
+  "um",
+  "mm",
+  "℃",
+  "kWh",
+  "ppm",
+  "rpm",
+  "A",
+  "V",
+  "ea/h"
+ ],
+ "analysis": {
+  "verdictTitle": "AI 적용 판정",
+  "approaches": [
+   "절차 개선",
+   "규칙",
+   "통계",
+   "ML",
+   "DX(전산화)"
+  ],
+  "verdicts": [
+   "가능",
+   "조건부 가능",
+   "지금은 불가"
+  ]
+ },
+ "requirements": {
+  "outOfScopeKinds": [
+   "DX",
+   "HW"
+  ],
+  "toolKinds": [
+   "TOOL"
+  ],
+  "kpiKinds": [
+   "*"
+  ],
+  "dataKinds": [
+   "*"
+  ]
+ }
+}

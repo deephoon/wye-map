@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__ · 지식 맵</title>
+<style>
+:root{--bg:#f6f6f3;--panel:#fff;--sunk:#efeee9;--line:#e1dfd8;--text:#1d2025;--muted:#5f636b;--faint:#8b8f96;--accent:#d9480f;
+  --ok:#2f7d4f;--ok-soft:#e3f2e8;--warn:#a15c07;--warn-soft:#fdf1d8;--bad:#b42318;--bad-soft:#fde4e1;--info:#2c5fa8;--info-soft:#e4ecf8;--edge:#c9c6bd;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#15171a;--panel:#1d2024;--sunk:#24272c;--line:#33373e;--text:#e7e8ea;--muted:#a6aab1;--faint:#7c818a;--accent:#ff8a4c;
+  --ok:#6cc18f;--ok-soft:#1c3226;--warn:#f0b54a;--warn-soft:#3a2d14;--bad:#ff8a80;--bad-soft:#3d1d1b;--info:#8ab4f8;--info-soft:#1c2a40;--edge:#454a52;color-scheme:dark}}
+:root[data-theme=dark]{--bg:#15171a;--panel:#1d2024;--sunk:#24272c;--line:#33373e;--text:#e7e8ea;--muted:#a6aab1;--faint:#7c818a;--accent:#ff8a4c;
+  --ok:#6cc18f;--ok-soft:#1c3226;--warn:#f0b54a;--warn-soft:#3a2d14;--bad:#ff8a80;--bad-soft:#3d1d1b;--info:#8ab4f8;--info-soft:#1c2a40;--edge:#454a52;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.55 -apple-system,"Apple SD Gothic Neo","Pretendard","Malgun Gothic",sans-serif}
+button{font:inherit;color:inherit}
+header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);padding:12px 20px 10px}
+.top{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+h1{font-size:18px;margin:0;letter-spacing:-.01em}
+.brief{color:var(--muted);font-size:13px;margin:6px 0 0;max-width:80em}
+.tabs{display:inline-flex;background:var(--sunk);border-radius:10px;padding:3px;gap:2px}
+.tabs button{border:0;background:none;padding:6px 12px;border-radius:8px;cursor:pointer;color:var(--muted);display:inline-flex;gap:6px;align-items:center}
+.tabs button[aria-selected=true]{background:var(--panel);color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,.08);font-weight:600}
+.count{font-size:11px;border-radius:9px;padding:0 6px;background:var(--line);color:var(--text);font-weight:600}
+.count.bad{background:var(--bad);color:#fff}.count.warn{background:var(--warn);color:#fff}
+input[type=search]{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:6px 10px;font:inherit;color:var(--text);min-width:200px}
+.stat{margin-left:auto;color:var(--faint);font-size:12px}
+main{display:flex;align-items:flex-start}
+#view{flex:1;min-width:0;padding:16px 20px 40px}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:12px;border-radius:999px;padding:1px 9px;border:1px solid transparent;white-space:nowrap;background:none}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}.pill.warn{background:var(--warn-soft);color:var(--warn)}.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.info{background:var(--info-soft);color:var(--info)}.pill.mute{background:var(--sunk);color:var(--muted)}
+a.pill{text-decoration:none}a.pill:hover,button.pill:hover{border-color:currentColor}
+.hint{color:var(--faint);font-size:12px;margin:0 0 12px}
+/* 문제 고리 보드 */
+.chain{background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:14px;overflow:hidden}
+.chain.sel{border-color:var(--accent)}
+.chain-head{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:12px 14px;border-bottom:1px solid var(--line)}
+.chain-title{border:0;background:none;padding:0;font-size:15px;font-weight:700;cursor:pointer;text-align:left}
+.chain-title:hover{color:var(--accent)}
+.spacer{flex:1}
+.flow{display:grid;grid-template-columns:repeat(7,minmax(118px,1fr));overflow-x:auto}
+.slot{padding:10px 10px 12px;border-right:1px solid var(--line);min-width:0;position:relative}
+.slot:last-child{border-right:0}
+.slot h4{margin:0 0 6px;font-size:11px;color:var(--faint);font-weight:600;letter-spacing:.02em}
+.chip{display:block;width:100%;text-align:left;border:1px solid var(--line);border-left:3px solid var(--c);background:var(--panel);border-radius:6px;padding:4px 7px;margin-bottom:5px;cursor:pointer;font-size:12.5px;line-height:1.35}
+.chip:hover,.chip:focus-visible{border-color:var(--accent);outline:none}.chip.sel{box-shadow:0 0 0 2px var(--accent)}
+.chip .x{color:var(--warn);font-weight:700;margin-left:4px}
+.empty{border:1px dashed var(--bad);color:var(--bad);background:var(--bad-soft);border-radius:6px;padding:4px 7px;font-size:12px}
+.none{color:var(--faint);font-size:12px}
+.summary{display:flex;gap:10px 16px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:14px}
+.summary-main,.summary-side{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.summary-main b{margin-right:6px;font-size:14px}
+.summary button.pill{cursor:pointer}
+/* 연결(계층 레인) */
+.lane-wrap{overflow-x:auto;padding-bottom:8px}
+#lanes{position:relative;display:grid;grid-template-columns:repeat(7,minmax(150px,1fr));gap:22px;min-width:1150px}
+#lanes svg{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.lane h3{font-size:12px;margin:0 0 8px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.lane h3 i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.node{position:relative;z-index:1;display:block;width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--c);border-radius:7px;padding:5px 8px;margin-bottom:6px;cursor:pointer;font-size:12.5px;line-height:1.3}
+.node small{display:block;color:var(--faint);font-size:11px}
+.node:hover,.node:focus-visible{border-color:var(--accent);outline:none}
+.node.sel{box-shadow:0 0 0 2px var(--accent)}.node.dim{opacity:.28}.node.near{border-color:var(--accent)}
+path.e{fill:none;stroke:var(--edge);stroke-width:1}path.e.hot{stroke:var(--accent);stroke-width:2}path.e.in{stroke:var(--info);stroke-width:2}
+text.el{font-size:10.5px;fill:var(--muted);paint-order:stroke;stroke:var(--bg);stroke-width:3px}
+/* 목록 */
+section.layer{margin-bottom:18px}section.layer h2{font-size:14px;margin:0 0 2px;display:flex;align-items:center;gap:8px}
+section.layer .def{color:var(--muted);font-size:12px;margin:0 0 8px}
+.dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.card{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:8px;padding:8px 10px;cursor:pointer;text-align:left}
+.card:hover,.card:focus-visible{border-color:var(--accent);outline:none}.card.sel{box-shadow:0 0 0 2px var(--accent)}.card.dim{opacity:.35}
+.card b{display:block;font-size:13px}.card small{color:var(--muted)}
+/* 정합성 */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:18px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.tile b{display:block;font-size:22px;letter-spacing:-.02em}.tile span{color:var(--muted);font-size:12px}
+.tile.bad b{color:var(--bad)}.tile.warn b{color:var(--warn)}.tile.ok b{color:var(--ok)}
+h2.sec{font-size:15px;margin:22px 0 4px}p.sub{color:var(--muted);font-size:12px;margin:0 0 10px}
+.conflict{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.conflict h3{margin:0 0 8px;font-size:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.claims{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+.claim{background:var(--sunk);border-radius:8px;padding:8px 10px}
+.claim b{display:block;font-size:15px;color:var(--warn)}.claim q{display:block;font-size:12.5px;quotes:none;margin:4px 0}.claim cite{font-style:normal;font-size:11px;color:var(--faint)}
+.ask{margin:8px 0 0;font-size:12.5px}.ask::before{content:"물을 것 · ";color:var(--faint)}
+table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);font-size:13px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;color:var(--muted);font-weight:600;background:var(--sunk)}
+td a{color:var(--info)}
+ul.issues{margin:4px 0 0;padding-left:18px;color:var(--bad);font-size:12.5px}
+.links{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.links button{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:1px 9px;font-size:12px;cursor:pointer}
+.links button:hover{border-color:var(--accent);color:var(--accent)}
+/* 상세 패널 */
+aside{width:400px;max-width:100%;border-left:1px solid var(--line);background:var(--panel);padding:16px 18px 40px;overflow:auto;height:calc(100vh - var(--hh,100px));position:sticky;top:var(--hh,100px);display:none}
+aside.open{display:block}
+aside h3{margin:0;font-size:17px}aside .kind{color:var(--muted);font-size:12px;margin-top:2px}
+aside dl{margin:12px 0}aside dt{font-size:11px;color:var(--faint);margin-top:10px;font-weight:600}aside dd{margin:2px 0 0}
+blockquote{margin:6px 0;padding:6px 10px;border-left:3px solid var(--line);font-size:13px;background:var(--sunk);border-radius:0 6px 6px 0}
+blockquote cite{display:block;color:var(--faint);font-style:normal;font-size:11px;margin-top:2px}
+.rel{display:block;width:100%;background:none;border:0;text-align:left;padding:5px 0;cursor:pointer;border-bottom:1px solid var(--line)}
+.rel:hover b{color:var(--accent)}.rel .why{color:var(--muted);font-size:12px;display:block}.rel .noev{color:var(--warn);font-size:11px}
+.close{float:right;border:0;background:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1}
+.box{border:1px solid var(--warn);background:var(--warn-soft);color:var(--warn);padding:6px 9px;border-radius:7px;font-size:12px;margin-top:10px}
+/* 글자: 한국어는 낱말(어절) 단위로 줄바꿈, 긴 영문·경로만 아무 데서나 끊음 */
+body{line-height:1.6;letter-spacing:-.003em;word-break:keep-all;overflow-wrap:anywhere;line-break:strict;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,h4,.chain-title{text-wrap:balance;letter-spacing:-.015em;line-height:1.35}
+p,dd,blockquote,q,li,.why{text-wrap:pretty}
+.brief{font-size:13px;line-height:1.7;max-width:56em;margin-top:8px}
+.hint,p.sub{line-height:1.65;max-width:62em}
+.count,.pill,.tile b,.stat,td:nth-child(3){font-variant-numeric:tabular-nums}
+.pill{line-height:1.6;padding:1px 10px}
+.chain-head{gap:6px 8px;padding:14px 16px 12px}
+.slot{padding:12px 12px 14px}
+.slot h4{letter-spacing:.02em;margin-bottom:8px}
+.chip,.node{line-height:1.42;padding:6px 9px;letter-spacing:-.005em}
+.chip{margin-bottom:6px}.node{margin-bottom:7px}
+.node small{margin-top:2px;letter-spacing:0}
+.empty{line-height:1.42;padding:6px 9px}
+.card{padding:10px 12px}.card b{line-height:1.4;margin-bottom:2px}.card small{line-height:1.5;display:block}
+.tile{padding:14px 16px}.tile b{line-height:1.2;margin-bottom:6px}.tile span{display:block;line-height:1.55}
+.conflict{padding:14px 16px}.claim{padding:10px 12px}.claim b{line-height:1.3}.claim q{line-height:1.6;margin:6px 0}
+.ask{line-height:1.6}
+td,th{line-height:1.55}td{padding:10px 12px}
+aside{line-height:1.65}aside h3{line-height:1.35;letter-spacing:-.02em}aside .kind{margin-top:4px;line-height:1.5}
+aside dt{margin-top:16px;letter-spacing:.02em}aside dd{margin-top:3px;line-height:1.7}
+blockquote{line-height:1.6;padding:8px 12px;margin:8px 0}blockquote cite{margin-top:4px;line-height:1.45}
+.rel{padding:8px 0;line-height:1.5}.rel .why{margin-top:2px;line-height:1.55}
+.box{line-height:1.55;padding:8px 10px}
+/* 우주: 힘으로 자리 잡는 그래프. 테마와 상관없이 어두운 하늘 */
+.space-wrap{position:relative;border-radius:14px;overflow:hidden;background:radial-gradient(ellipse at 50% 40%,#1b2340 0%,#0d1122 55%,#070912 100%);height:calc(100vh - var(--hh,100px) - 90px);min-height:420px}
+.space-wrap svg{width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+.space-wrap svg:active{cursor:grabbing}
+.space-wrap .star{fill:#fff}
+.space-wrap .lk{stroke:rgba(170,190,255,.18);stroke-width:calc(var(--k,1) * 1px)}
+.space-wrap .lk.hot{stroke:#ff9a5c;stroke-width:calc(var(--k,1) * 2px)}.space-wrap .lk.in{stroke:#8ab4f8;stroke-width:calc(var(--k,1) * 2px)}
+.space-wrap circle.n{cursor:pointer;stroke:rgba(255,255,255,.55);stroke-width:1}
+.space-wrap circle.n.sel{stroke:#fff;stroke-width:3}
+.space-wrap .glow{filter:url(#glow)}
+.space-wrap text{font-size:calc(var(--k,1) * 12.5px);stroke-width:calc(var(--k,1) * 3.5px);fill:#e6e9f5;paint-order:stroke;stroke:#0b0f1d;stroke-linejoin:round;letter-spacing:-.01em;pointer-events:none}
+.space-wrap text.el{font-size:calc(var(--k,1) * 11px);fill:#b9c2dc}
+.space-wrap g.dim{opacity:.16}
+.space-legend{position:absolute;left:12px;bottom:10px;background:rgba(7,9,18,.72);border-radius:8px;padding:5px 10px;display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:#c9cfe2;line-height:1.5}
+.space-legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:0}
+.space-tip{position:absolute;right:12px;bottom:10px;background:rgba(7,9,18,.72);border-radius:8px;padding:5px 10px;font-size:11.5px;color:#9aa3bf}
+@media (max-width:860px){
+  header{padding:10px 16px}#view{padding:12px 16px 40px}.stat{margin-left:0;flex-basis:100%}
+  .flow{grid-template-columns:1fr}.slot{border-right:0;border-bottom:1px solid var(--line)}
+  aside{position:fixed;inset:auto 0 0 0;width:100%;height:62vh;border-left:0;border-top:1px solid var(--line);z-index:30;box-shadow:0 -8px 24px rgba(0,0,0,.15)}
+  input[type=search]{min-width:0;flex-basis:100%}
+}
+</style>
+</head>
+<body>
+<header id="hdr">
+  <div class="top">
+    <h1>__TITLE__</h1>
+    <div class="tabs" role="tablist" aria-label="보기">
+      <button role="tab" data-view="board" aria-selected="true">문제 고리</button>
+      <button role="tab" data-view="lanes" aria-selected="false">연결</button>
+      <button role="tab" data-view="space" aria-selected="false">우주</button>
+      <button role="tab" data-view="list" aria-selected="false">목록</button>
+      <button role="tab" data-view="integrity" aria-selected="false">정합성 <span class="count" id="icount"></span></button>
+    </div>
+    <input id="q" type="search" placeholder="항목 찾기" aria-label="항목 찾기">
+    <span class="stat" id="stat"></span>
+  </div>
+  <p class="brief" id="brief"></p>
+</header>
+<main><div id="view" role="tabpanel"></div><aside id="panel" aria-live="polite"></aside></main>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+const D = JSON.parse(document.getElementById('data').textContent);
+const dark = () => document.documentElement.dataset.theme === 'dark' || (matchMedia('(prefers-color-scheme: dark)').matches && document.documentElement.dataset.theme !== 'light');
+const layerOf = Object.fromEntries(D.layers.map(l => [l.id, l]));
+const color = id => { const l = layerOf[id]; return l ? (dark() ? l.color : l.colorLight) : '#888'; };
+const byId = Object.fromEntries(D.entities.map(e => [e.id, e]));
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const view$ = document.getElementById('view'), panel = document.getElementById('panel');
+let selected = null, view = 'board';
+
+// 항목별 불일치, 문제별 분석 문서 색인
+const conflictsOf = {};
+for (const c of D.conflicts) for (const id of c.entityIds || []) (conflictsOf[id] ??= []).push(c);
+const docOf = Object.fromEntries(D.documents.filter(d => d.problemId).map(d => [d.problemId, d]));
+const docIssues = d => d.missing.length + d.badTags.length + d.rules.length;
+const noEvidence = D.relations.filter(r => !(r.evidence || []).length).length;
+const integrityProblems = D.checkErrors.length + D.documents.reduce((n, d) => n + docIssues(d), 0);
+
+document.getElementById('brief').textContent = D.brief;
+document.getElementById('stat').textContent = `항목 ${D.entities.length} · 관계 ${D.relations.length} · 문제 ${D.chains.length} · 질문 ${D.questions.length}`;
+const ic = document.getElementById('icount');
+ic.textContent = integrityProblems ? `오류 ${integrityProblems}` : D.conflicts.length ? `불일치 ${D.conflicts.length}` : '통과';
+ic.className = 'count ' + (integrityProblems ? 'bad' : D.conflicts.length ? 'warn' : '');
+const setHeaderHeight = () => document.documentElement.style.setProperty('--hh', document.getElementById('hdr').offsetHeight + 'px');
+
+const matches = e => { const q = document.getElementById('q').value.trim().toLowerCase();
+  return !q || (e.title + ' ' + (e.aliases || []).join(' ') + ' ' + (e.definition || '')).toLowerCase().includes(q); };
+function neighbours(id) {
+  const m = {};
+  for (const r of D.relations) { if (r.fromId === id) (m[r.toId] ??= []).push(r.ko); if (r.toId === id) (m[r.fromId] ??= []).push(r.inverseKo); }
+  return m;
+}
+function verdictPill(v) {
+  if (!v) return '<span class="pill mute">분석 한 장 없음</span>';
+  const cls = v === '가능' ? 'ok' : v.startsWith('조건부') ? 'warn' : v.includes('불가') ? 'bad' : 'info';
+  return `<span class="pill ${cls}">${esc(D.verdictTitle || '판정')} · ${esc(v)}</span>`;
+}
+
+// 문제 고리 보드: 문제마다 현상부터 목표까지 한 줄. 빈 필수 자리는 붉은 점선
+function renderBoard() {
+  // 분석 한 장이 있는 문제부터, 그다음 중요도·빈 자리 순
+  const chains = [...D.chains].sort((a, b) => (docOf[b.problem.id] ? 1 : 0) - (docOf[a.problem.id] ? 1 : 0) || (byId[b.problem.id].importance || 0) - (byId[a.problem.id].importance || 0) || b.missing.length - a.missing.length);
+  // 요약 카드: 분석 한 장 판정, 불일치·질문 수, 보낼 파일
+  const judged = D.documents.filter(d => d.problemId);
+  let html = `<div class="summary"><div class="summary-main"><b>진단 요약</b>
+      ${judged.length ? judged.map(d => `<button class="pill ${d.verdict === '가능' ? 'ok' : (d.verdict || '').includes('불가') ? 'bad' : 'warn'}" data-id="${d.problemId}">${esc(d.name)} · ${esc(d.verdict || '판정 없음')}</button>`).join('') : '<span class="pill mute">분석 한 장 없음 — "○○ 문제 분석해 줘"</span>'}
+    </div><div class="summary-side">
+      <button class="pill ${D.conflicts.length ? 'warn' : 'ok'}" data-goto="integrity">불일치 ${D.conflicts.length}</button>
+      <span class="pill info">질문 ${D.questionCount ?? D.questions.length}</span>
+      <a class="pill info" href="${encodeURI(D.files.summary)}" target="_blank" rel="noopener">${esc(D.files.summary)}</a>
+      <a class="pill info" href="${encodeURI(D.files.sheet)}">${esc(D.files.sheet)}</a>
+    </div></div>
+    <p class="hint">문제마다 고리를 왼쪽부터 읽습니다. 붉은 점선은 꼭 있어야 하는데 자료에 없는 자리이고, 다음에 물을 곳입니다. 칩을 누르면 근거 원문이 열립니다.</p>`;
+  for (const c of chains) {
+    const p = byId[c.problem.id];
+    const ids = new Set([c.problem.id, ...c.slots.flatMap(s => s.nodes.map(n => n.id))]);
+    if (![...ids].some(id => byId[id] && matches(byId[id]))) continue;
+    const xs = new Set([...ids].flatMap(id => (conflictsOf[id] || []).map(x => x.id)));
+    const doc = docOf[c.problem.id];
+    const docState = doc ? (docIssues(doc) ? `<span class="pill bad">문서 오류 ${docIssues(doc)}</span>` : `<span class="pill ok">인용 ${doc.quotes}개 원문 확인</span>`) : '';
+    html += `<article class="chain${ids.has(selected) ? ' sel' : ''}"><div class="chain-head">
+      <button class="chain-title" data-id="${p.id}">${esc(p.title)}</button>
+      ${verdictPill(doc && doc.verdict)}
+      ${c.missing.length ? `<span class="pill bad">빈 자리 ${c.missing.length}</span>` : '<span class="pill ok">고리 완성</span>'}
+      ${xs.size ? `<button class="pill warn" style="cursor:pointer" data-goto="integrity">자료 간 불일치 ${xs.size}</button>` : ''}
+      ${docState}<span class="spacer"></span>
+      ${doc ? `<a class="pill info" href="${encodeURI(doc.path)}" target="_blank" rel="noopener">분석 한 장 열기</a>` : ''}
+    </div><div class="flow">`;
+    for (const s of c.slots) {
+      html += `<div class="slot"><h4>${esc(s.ko)}</h4>`;
+      if (s.empty) html += s.required ? `<div class="empty">비어 있음</div>` : `<div class="none">—</div>`;
+      for (const n of s.nodes) { const e = byId[n.id]; if (!e) continue;
+        html += `<button class="chip${n.id === selected ? ' sel' : ''}" style="--c:${color(e.layer)}" data-id="${n.id}">${esc(e.title)}${conflictsOf[n.id] ? '<span class="x" title="자료 간 불일치">!</span>' : ''}</button>`; }
+      html += `</div>`;
+    }
+    html += `</div></article>`;
+  }
+  view$.innerHTML = html;
+}
+
+// 연결: 계층을 세로 레인으로. 이웃 레인의 평균 위치로 두 번 정렬해 선 엇갈림을 줄임
+let laneOrder = null;
+function orderLanes() {
+  const lanes = D.layers.map(l => D.entities.filter(e => e.layer === l.id).sort((a, b) => (b.importance || 0) - (a.importance || 0)));
+  const adj = {}; for (const r of D.relations) { (adj[r.fromId] ??= []).push(r.toId); (adj[r.toId] ??= []).push(r.fromId); }
+  for (let pass = 0; pass < 2; pass++) {
+    const at = {}; lanes.forEach(l => l.forEach((e, i) => at[e.id] = i));
+    const mean = e => { const ns = (adj[e.id] || []).filter(n => at[n] !== undefined); return ns.length ? ns.reduce((s, n) => s + at[n], 0) / ns.length : at[e.id]; };
+    lanes.forEach(l => { const m = Object.fromEntries(l.map(e => [e.id, mean(e)])); l.sort((a, b) => m[a.id] - m[b.id]); });
+  }
+  laneOrder = lanes;
+}
+function renderLanes() {
+  if (!laneOrder) orderLanes();
+  const near = selected ? neighbours(selected) : {};
+  let html = `<p class="hint">왼쪽 목표부터 오른쪽 결정까지 계층별로 놓았습니다. 항목을 누르면 이어진 것만 남고, 나가는 관계는 주황, 들어오는 관계는 파랑으로 보입니다.</p><div class="lane-wrap"><div id="lanes">`;
+  D.layers.forEach((l, i) => {
+    html += `<div class="lane"><h3><i style="background:${color(l.id)}"></i>${esc(l.ko)} <span class="count">${laneOrder[i].length}</span></h3>`;
+    for (const e of laneOrder[i]) {
+      const dim = (selected && e.id !== selected && !near[e.id]) || !matches(e);
+      html += `<button class="node${e.id === selected ? ' sel' : ''}${dim ? ' dim' : ''}${near[e.id] ? ' near' : ''}" style="--c:${color(e.layer)}" data-id="${e.id}">${esc(e.title)}<small>${esc(e.typeKo)}${conflictsOf[e.id] ? ' · 불일치' : ''}</small></button>`;
+    }
+    html += `</div>`;
+  });
+  view$.innerHTML = html + `<svg aria-hidden="true"></svg></div></div>`;
+  requestAnimationFrame(drawEdges);
+}
+function drawEdges() {
+  const host = document.getElementById('lanes'); if (!host) return;
+  const svg = host.querySelector('svg'), box = host.getBoundingClientRect();
+  svg.setAttribute('width', host.scrollWidth); svg.setAttribute('height', host.scrollHeight);
+  const rect = id => { const n = host.querySelector(`.node[data-id="${id}"]`); if (!n) return null; const r = n.getBoundingClientRect();
+    return { l: r.left - box.left, r: r.right - box.left, y: r.top - box.top + r.height / 2 }; };
+  let out = '';
+  for (const rel of D.relations) {
+    const cls = !selected ? '' : rel.fromId === selected ? 'hot' : rel.toId === selected ? 'in' : null;
+    if (cls === null) continue;
+    const a = rect(rel.fromId), b = rect(rel.toId); if (!a || !b) continue;
+    // 다른 레인이면 마주 보는 가장자리끼리, 같은 레인이면 오른쪽으로 둥글게
+    const same = !(a.r < b.l || b.r < a.l);
+    const x1 = same ? a.r : a.r < b.l ? a.r : a.l, x2 = same ? b.r : a.r < b.l ? b.l : b.r;
+    const c1 = same ? x1 + 40 : (x1 + x2) / 2, c2 = same ? x2 + 40 : (x1 + x2) / 2;
+    out += `<path class="e ${cls}" d="M${x1},${a.y} C${c1},${a.y} ${c2},${b.y} ${x2},${b.y}"/>`;
+    if (cls) out += `<text class="el" x="${same ? x1 + 34 : (x1 + x2) / 2}" y="${(a.y + b.y) / 2 - 3}" text-anchor="middle">${esc(cls === 'hot' ? rel.ko : rel.inverseKo)}</text>`;
+  }
+  svg.innerHTML = out;
+}
+
+// 우주: 계층 띠에서 출발해 반발·인력으로 자리 잡기(한 번만 계산). 이름표는 중요도 순으로 놓고 겹치면 숨김
+let sky = null;
+function layoutSky() {
+  const order = D.layers.map(l => l.id), pos = {}, rows = {};
+  D.entities.forEach(e => (rows[e.layer] ??= []).push(e));
+  order.forEach((id, i) => (rows[id] || []).forEach((e, j, arr) => { pos[e.id] = { x: (j - (arr.length - 1) / 2) * 150, y: i * 170 }; }));
+  const ids = Object.keys(pos);
+  for (let step = 0; step < 320; step++) {
+    const f = Object.fromEntries(ids.map(id => [id, { x: 0, y: 0 }]));
+    for (let a = 0; a < ids.length; a++) for (let b = a + 1; b < ids.length; b++) {
+      const p = pos[ids[a]], q = pos[ids[b]]; let dx = p.x - q.x, dy = p.y - q.y; const d2 = Math.max(dx * dx + dy * dy, 100);
+      if (d2 > 200000) continue; const k = 12000 / d2, d = Math.sqrt(d2); dx /= d; dy /= d;
+      f[ids[a]].x += dx * k; f[ids[a]].y += dy * k; f[ids[b]].x -= dx * k; f[ids[b]].y -= dy * k;
+    }
+    for (const r of D.relations) { const p = pos[r.fromId], q = pos[r.toId]; if (!p || !q) continue;
+      const dx = q.x - p.x, dy = q.y - p.y, d = Math.hypot(dx, dy) || 1, k = (d - 170) * 0.02;
+      f[r.fromId].x += dx / d * k; f[r.fromId].y += dy / d * k; f[r.toId].x -= dx / d * k; f[r.toId].y -= dy / d * k; }
+    for (const id of ids) { const home = order.indexOf(byId[id].layer) * 170;
+      pos[id].x += Math.max(-20, Math.min(20, f[id].x)); pos[id].y += Math.max(-20, Math.min(20, f[id].y + (home - pos[id].y) * 0.05)); }
+  }
+  const xs = ids.map(id => pos[id].x), ys = ids.map(id => pos[id].y);
+  const box = { x: Math.min(...xs) - 140, y: Math.min(...ys) - 90, w: Math.max(...xs) - Math.min(...xs) + 280, h: Math.max(...ys) - Math.min(...ys) + 180 };
+  // 별: 자리 계산과 무관한 고정 배경(같은 맵이면 같은 하늘)
+  let seed = D.entities.length * 7919; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const stars = Array.from({ length: 140 }, () => ({ x: box.x + rnd() * box.w, y: box.y + rnd() * box.h, r: rnd() * 1.2 + .2, o: rnd() * .6 + .15 }));
+  sky = { pos, box, vb: { ...box }, stars };
+}
+function renderSpace() {
+  if (!sky) layoutSky();
+  const near = selected ? neighbours(selected) : {};
+  const { pos, vb, stars } = sky;
+  // 이름표 자리: 중요한 항목부터 놓고 앞 이름표와 겹치면 숨김(고른 항목·이웃은 늘 보임). k = 화면 1px의 사용자 단위
+  const hh = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hh')) || 100;
+  const k = Math.max(vb.w / Math.max(view$.clientWidth - 40, 300), vb.h / Math.max(innerHeight - hh - 90, 420)), shown = new Set(), boxes = [];
+  for (const e of [...D.entities].sort((a, b) => (b.importance || 0) - (a.importance || 0))) {
+    const p = pos[e.id], r = 6 + 2 * (e.importance || 2), w = (e.title.length * 12.5 + 8) * k;
+    const b = { l: p.x - w / 2, r: p.x + w / 2, t: p.y + r, bt: p.y + r + 19 * k };
+    if (boxes.some(o => b.l < o.r && b.r > o.l && b.t < o.bt && b.bt > o.t)) continue;
+    boxes.push(b); shown.add(e.id);
+  }
+  let s = `<defs><filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>`;
+  s += stars.map(t => `<circle class="star" cx="${t.x.toFixed(1)}" cy="${t.y.toFixed(1)}" r="${t.r.toFixed(2)}" opacity="${t.o.toFixed(2)}"/>`).join('');
+  for (const r of D.relations) { const a = pos[r.fromId], b = pos[r.toId]; if (!a || !b) continue;
+    const cls = !selected ? '' : r.fromId === selected ? 'hot' : r.toId === selected ? 'in' : 'dim';
+    if (cls === 'dim') continue;
+    s += `<line class="lk ${cls}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`;
+    if (cls) s += `<text class="el" x="${(a.x + b.x) / 2}" y="${(a.y + b.y) / 2 - 5}" text-anchor="middle">${esc(cls === 'hot' ? r.ko : r.inverseKo)}</text>`; }
+  for (const e of D.entities) { const p = pos[e.id], r = 6 + 2 * (e.importance || 2);
+    const dim = (selected && e.id !== selected && !near[e.id]) || !matches(e);
+    const label = shown.has(e.id) || e.id === selected || near[e.id];
+    s += `<g class="${dim ? 'dim' : ''}"><circle class="n glow${e.id === selected ? ' sel' : ''}" data-id="${e.id}" cx="${p.x}" cy="${p.y}" r="${r}" fill="${D.layers.find(l => l.id === e.layer)?.color || '#888'}"><title>${esc(e.title)} · ${esc(e.typeKo)}</title></circle>`
+      + (label ? `<text x="${p.x}" y="${p.y + r + 15 * k}" text-anchor="middle">${esc(e.title)}</text>` : '') + `</g>`; }
+  const legend = D.layers.map(l => `<span><i style="background:${l.color}"></i>${esc(l.ko)}</span>`).join('');
+  view$.innerHTML = `<p class="hint">자료 전체를 한눈에 보는 우주 지도입니다. 끌어서 옮기고 휠로 확대합니다. 이름이 겹치는 작은 항목은 점만 보이고, 누르면 이름과 이웃이 나타납니다.</p>
+    <div class="space-wrap"><svg viewBox="${vb.x} ${vb.y} ${vb.w} ${vb.h}" role="img" aria-label="우주 지도">${s}</svg><div class="space-legend">${legend}</div><div class="space-tip">항목 ${D.entities.length} · 관계 ${D.relations.length}</div></div>`;
+  const svg = view$.querySelector('svg');
+  const apply = () => { svg.setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.w} ${vb.h}`); svg.style.setProperty('--k', Math.max(vb.w / svg.clientWidth, vb.h / svg.clientHeight)); };
+  apply();
+  let drag = null;
+  svg.addEventListener('pointerdown', ev => { if (!ev.target.closest('[data-id]')) { drag = { x: ev.clientX, y: ev.clientY, vx: vb.x, vy: vb.y }; svg.setPointerCapture(ev.pointerId); } });
+  svg.addEventListener('pointermove', ev => { if (!drag) return; const k = vb.w / svg.clientWidth; vb.x = drag.vx - (ev.clientX - drag.x) * k; vb.y = drag.vy - (ev.clientY - drag.y) * k; apply(); });
+  svg.addEventListener('pointerup', () => drag = null);
+  svg.addEventListener('wheel', ev => { ev.preventDefault(); const k = ev.deltaY > 0 ? 1.12 : 1 / 1.12, r = svg.getBoundingClientRect();
+    const mx = vb.x + (ev.clientX - r.left) / r.width * vb.w, my = vb.y + (ev.clientY - r.top) / r.height * vb.h;
+    vb.x = mx - (mx - vb.x) * k; vb.y = my - (my - vb.y) * k; vb.w *= k; vb.h *= k; apply();
+    clearTimeout(sky.t); sky.t = setTimeout(renderSpace, 220); }, { passive: false });
+}
+
+// 목록: 계층별 카드
+function renderList() {
+  const near = selected ? neighbours(selected) : {};
+  let html = '';
+  for (const l of D.layers) {
+    const items = D.entities.filter(e => e.layer === l.id && matches(e)).sort((a, b) => (b.importance || 0) - (a.importance || 0));
+    if (!items.length) continue;
+    html += `<section class="layer"><h2><i class="dot" style="background:${color(l.id)}"></i>${esc(l.ko)} <span class="count">${items.length}</span></h2><p class="def">${esc(l.definition)}</p><div class="cards">`;
+    for (const e of items) {
+      const dim = selected && e.id !== selected && !near[e.id];
+      html += `<button class="card${e.id === selected ? ' sel' : ''}${dim ? ' dim' : ''}" style="--c:${color(e.layer)}" data-id="${e.id}"><b>${esc(e.title)}</b><small>${esc(e.typeKo)}${e.questions ? ` · 질문 ${e.questions}` : ''}${conflictsOf[e.id] ? ' · 불일치' : ''}${near[e.id] ? ' · ' + esc(near[e.id].join(', ')) : ''}</small></button>`;
+    }
+    html += `</div></section>`;
+  }
+  view$.innerHTML = html;
+}
+
+// 정합성: 맵 검사, 결과 문서 검사, 자료 간 불일치
+function renderIntegrity() {
+  const quotes = D.documents.reduce((n, d) => n + d.quotes, 0), docErr = D.documents.reduce((n, d) => n + docIssues(d), 0);
+  const tile = (cls, big, label) => `<div class="tile ${cls}"><b>${big}</b><span>${label}</span></div>`;
+  let html = `<div class="tiles">
+    ${tile(D.checkErrors.length ? 'bad' : 'ok', D.checkErrors.length ? `오류 ${D.checkErrors.length}` : '통과', '맵 검사 — 항목 인용이 원문에 글자 그대로 있는지, 허용된 관계인지')}
+    ${tile(docErr ? 'bad' : 'ok', docErr ? `오류 ${docErr}` : `인용 ${quotes}개 확인`, `결과 문서 ${D.documents.length}건 — 따옴표 인용, 조각 표시, 판정 규칙`)}
+    ${tile(D.conflicts.length ? 'warn' : 'ok', `${D.conflicts.length}건`, '자료 간 불일치 — 같은 대상을 문서마다 다르게 적은 곳')}
+    ${tile(noEvidence ? 'warn' : 'ok', `${noEvidence} / ${D.relations.length}`, '근거 문장 없는 관계 — 해석으로 이은 연결')}
+  </div>`;
+  html += `<h2 class="sec">자료 간 불일치</h2><p class="sub">값마다 원문 인용이 붙어 있고, 검사 스크립트가 인용을 원문과 대조했습니다. 판단이 갈리기 전에 물어서 하나로 정해야 합니다.</p>`;
+  if (!D.conflicts.length) html += '<p class="hint">기록된 불일치가 없습니다.</p>';
+  for (const c of D.conflicts) {
+    html += `<div class="conflict"><h3>${esc(c.topic)} <span class="pill warn">값 ${c.claims.length}개</span></h3><div class="claims">`
+      + c.claims.map(x => `<div class="claim"><b>${esc(x.value)}</b><q>${esc(x.quote)}</q><cite>${esc(x.file || x.segmentId)}${x.page ? ' p.' + x.page : ''}</cite></div>`).join('')
+      + `</div>${c.ask ? `<p class="ask">${esc(c.ask)}</p>` : ''}<div class="links">${(c.entityIds || []).filter(id => byId[id]).map(id => `<button data-id="${id}">${esc(byId[id].title)}</button>`).join('')}</div></div>`;
+  }
+  html += `<h2 class="sec">결과 문서 검사</h2><p class="sub">에이전트가 쓴 분석 한 장과 회의 정리입니다. 따옴표 안 인용이 원문에 실제로 있는지, 데이터가 비었는데 '가능'으로 판정하지 않았는지 봅니다.</p>`;
+  html += D.documents.length ? `<table><thead><tr><th>문서</th><th>판정</th><th>인용</th><th>결과</th></tr></thead><tbody>` + D.documents.map(d => {
+    const issues = [...d.missing.map(m => `원문에 없는 인용: “${m.quote}”${m.segmentId ? ' [' + m.segmentId + ']' : ''}`), ...d.badTags.map(t => `없는 조각 ${t}`), ...d.rules];
+    return `<tr><td><a href="${encodeURI(d.path)}" target="_blank" rel="noopener">${esc(d.name)}</a></td><td>${d.verdict ? verdictPill(d.verdict) : '—'}</td><td>${d.quotes}</td><td>${issues.length ? `<span class="pill bad">오류 ${issues.length}</span><ul class="issues">${issues.map(i => `<li>${esc(i)}</li>`).join('')}</ul>` : '<span class="pill ok">통과</span>'}</td></tr>`;
+  }).join('') + `</tbody></table>` : '<p class="hint">아직 결과 문서가 없습니다.</p>';
+  if (D.checkErrors.length || D.warnings.length) {
+    html += `<h2 class="sec">맵 검사 메시지</h2><ul class="issues">${D.checkErrors.map(e => `<li>${esc(e)}</li>`).join('')}</ul>`
+      + (D.warnings.length ? `<ul>${D.warnings.map(w => `<li class="hint">${esc(w)}</li>`).join('')}</ul>` : '');
+  }
+  view$.innerHTML = html;
+}
+
+function evidenceHtml(list) {
+  return (list || []).map(x => `<blockquote>${esc(x.quote)}<cite>${esc(x.file || x.segmentId)}${x.page ? ' p.' + x.page : ''} · ${esc(x.segmentId)}</cite></blockquote>`).join('');
+}
+function renderPanel() {
+  const e = byId[selected];
+  if (!e) { panel.className = ''; panel.innerHTML = ''; return; }
+  const field = (k, label) => e[k] ? `<dt>${label}</dt><dd>${esc(e[k])}</dd>` : '';
+  const props = Object.entries(e.properties || {}).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('');
+  const rel = (r, out) => { const o = byId[out ? r.toId : r.fromId]; if (!o) return '';
+    return `<button class="rel" data-id="${o.id}">${out ? esc(r.ko) + ' → ' : esc(r.inverseKo) + ' ← '}<b>${esc(o.title)}</b><span class="why">${esc(r.why || '')}</span>${(r.evidence || []).length ? '' : '<span class="noev">근거 문장 없음 · 해석</span>'}</button>`; };
+  const links = D.relations.filter(r => r.fromId === e.id || r.toId === e.id);
+  const xs = (conflictsOf[e.id] || []).map(c => `<div class="box"><b>자료 간 불일치 · ${esc(c.topic)}</b><br>${c.claims.map(x => esc(x.value) + ' (' + esc(x.file || x.segmentId) + ')').join(' / ')}</div>`).join('');
+  panel.innerHTML = `<button class="close" aria-label="닫기">×</button><h3>${esc(e.title)}</h3><div class="kind">${esc(e.typeKo)} · ${esc((layerOf[e.layer] || {}).ko || '')}${(e.aliases || []).length ? ' · ' + esc(e.aliases.join(', ')) : ''}</div>`
+    + (e.held.length ? `<div class="box">맵 보류: ${esc(e.held.join(', '))}</div>` : '') + xs
+    + `<dl>${field('definition', '무엇')}${field('summary', '이 프로젝트에서')}${field('whyItMatters', '왜 중요한가')}${field('whatWeKnow', '아는 것')}${field('whatIsMissing', '모르는 것')}${field('nextAction', '다음 행동')}${props}</dl>`
+    + `<dt>근거 ${(e.evidence || []).length}</dt>${evidenceHtml(e.evidence)}`
+    + (links.length ? `<dt>연결 ${links.length}</dt>${links.filter(r => r.fromId === e.id).map(r => rel(r, true)).join('')}${links.filter(r => r.toId === e.id).map(r => rel(r, false)).join('')}` : '');
+  panel.className = 'open';
+}
+
+function render() {
+  document.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-selected', b.dataset.view === view));
+  ({ board: renderBoard, lanes: renderLanes, space: renderSpace, list: renderList, integrity: renderIntegrity })[view]();
+  renderPanel();
+  setHeaderHeight();
+}
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { view = b.dataset.view; render(); });
+document.addEventListener('click', ev => {
+  const go = ev.target.closest('[data-goto]'); if (go) { view = go.dataset.goto; render(); return; }
+  if (ev.target.closest('.close')) { selected = null; render(); return; }
+  const t = ev.target.closest('[data-id]'); if (!t) return;
+  // 패널 안 연결은 늘 그 항목으로 이동, 나머지는 다시 누르면 선택 해제
+  selected = t.classList.contains('rel') || t.dataset.id !== selected ? t.dataset.id : null;
+  render();
+});
+document.getElementById('q').oninput = render;
+addEventListener('keydown', ev => { if (ev.key === 'Escape' && selected) { selected = null; render(); } });
+addEventListener('resize', () => { setHeaderHeight(); if (view === 'lanes') drawEdges(); });
+render();
+</script>
+</body>
+</html>

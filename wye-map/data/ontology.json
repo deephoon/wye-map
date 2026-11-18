@@ -1,0 +1,2008 @@
+{
+ "pack_ids": [
+  "core",
+  "manufacturing",
+  "recipe",
+  "digital_twin",
+  "data_standardization"
+ ],
+ "entity_types": {
+  "Project": {
+   "id": "Project",
+   "layer": "GOAL",
+   "ko": "프로젝트",
+   "properties": [],
+   "definition": "목표·범위·결정을 함께 관리하는 프로젝트.",
+   "identity": "프로젝트 ID로 구별한다."
+  },
+  "Goal": {
+   "id": "Goal",
+   "layer": "GOAL",
+   "ko": "목표",
+   "properties": [
+    {
+     "id": "targetWindow",
+     "ko": "적용 기간",
+     "required": false
+    }
+   ],
+   "definition": "프로젝트가 달성하려는 결과.",
+   "identity": "달성 대상·기간·판정 기준이 다르면 구별한다."
+  },
+  "KPI": {
+   "id": "KPI",
+   "layer": "GOAL",
+   "ko": "성과 기준",
+   "properties": [
+    {
+     "id": "formula",
+     "ko": "산식",
+     "required": false
+    },
+    {
+     "id": "currentValue",
+     "ko": "현재값",
+     "required": false
+    },
+    {
+     "id": "targetValue",
+     "ko": "목표값",
+     "required": false
+    },
+    {
+     "id": "unit",
+     "ko": "단위",
+     "required": false
+    },
+    {
+     "id": "aggregation",
+     "ko": "집계 기준",
+     "required": false
+    }
+   ],
+   "definition": "결과나 상태를 측정하는 지표.",
+   "identity": "측정 대상·산식·집계 단위로 구별한다."
+  },
+  "Stakeholder": {
+   "id": "Stakeholder",
+   "layer": "SCOPE",
+   "ko": "관계자",
+   "properties": [
+    {
+     "id": "organization",
+     "ko": "소속",
+     "required": false
+    },
+    {
+     "id": "role",
+     "ko": "역할",
+     "required": false
+    }
+   ],
+   "definition": "업무에 참여하거나 책임을 가진 사람·조직.",
+   "identity": "이름만으로 합치지 않고 소속·역할을 확인한다."
+  },
+  "Scope": {
+   "id": "Scope",
+   "layer": "SCOPE",
+   "ko": "대상 범위",
+   "properties": [
+    {
+     "id": "included",
+     "ko": "포함 대상",
+     "required": false
+    },
+    {
+     "id": "excluded",
+     "ko": "제외 대상",
+     "required": false
+    }
+   ],
+   "definition": "프로젝트에서 다루는 대상과 그 경계.",
+   "identity": "포함 대상·제외 대상·적용 기간으로 구별한다."
+  },
+  "Product": {
+   "id": "Product",
+   "layer": "SCOPE",
+   "ko": "제품·산출물",
+   "properties": [],
+   "definition": "공정이 생산하거나 프로젝트가 제공하는 제품·산출물.",
+   "identity": "제품 코드·모델·판본으로 구별한다."
+  },
+  "CurrentPractice": {
+   "id": "CurrentPractice",
+   "layer": "CURRENT",
+   "ko": "현재 방식",
+   "properties": [],
+   "definition": "현재 수행하는 작업이나 판단 방식.",
+   "identity": "수행 대상·주체·상황이 다르면 구별한다."
+  },
+  "Observation": {
+   "id": "Observation",
+   "layer": "PROBLEM",
+   "ko": "관찰 현상",
+   "properties": [
+    {
+     "id": "observedAt",
+     "ko": "관찰 시점",
+     "required": false
+    },
+    {
+     "id": "condition",
+     "ko": "발생 조건",
+     "required": false
+    }
+   ],
+   "definition": "원문에서 관찰·기록된 현상.",
+   "identity": "발생 대상·시점·조건으로 구별하며 원인 판단과 분리한다."
+  },
+  "Problem": {
+   "id": "Problem",
+   "layer": "PROBLEM",
+   "ko": "문제",
+   "properties": [
+    {
+     "id": "affectedObject",
+     "ko": "발생 대상",
+     "required": false
+    },
+    {
+     "id": "condition",
+     "ko": "발생 조건",
+     "required": false
+    }
+   ],
+   "definition": "목표나 업무 수행을 방해한다고 판단한 문제.",
+   "identity": "대상·어긋난 상태·영향이 같은지 확인한다."
+  },
+  "Impact": {
+   "id": "Impact",
+   "layer": "PROBLEM",
+   "ko": "영향",
+   "properties": [],
+   "definition": "문제가 업무·품질·비용 등에 미치는 결과.",
+   "identity": "영향 대상과 결과로 구별한다."
+  },
+  "Requirement": {
+   "id": "Requirement",
+   "layer": "TO_BE",
+   "ko": "요구사항",
+   "properties": [
+    {
+     "id": "applicationCondition",
+     "ko": "적용 조건",
+     "required": false
+    }
+   ],
+   "definition": "문제 해결을 위해 충족해야 할 조건·동작.",
+   "identity": "요구사항 코드·적용 대상·동작으로 구별한다."
+  },
+  "Capability": {
+   "id": "Capability",
+   "layer": "TO_BE",
+   "ko": "핵심 과제",
+   "properties": [],
+   "definition": "필요한 업무 능력이나 핵심 과제.",
+   "identity": "수행 대상과 기대 능력으로 구별한다."
+  },
+  "SolutionDirection": {
+   "id": "SolutionDirection",
+   "layer": "TO_BE",
+   "ko": "해결 방향",
+   "properties": [],
+   "definition": "문제 해결을 위한 접근 방향.",
+   "identity": "해결 원리로 구별하며 특정 제품과 분리한다."
+  },
+  "Solution": {
+   "id": "Solution",
+   "layer": "TO_BE",
+   "ko": "적용 후보",
+   "properties": [],
+   "definition": "자료에서 적용 후보로 지정한 구체적 수단.",
+   "identity": "제품·기술·버전·적용 대상으로 구별한다."
+  },
+  "UsageScenario": {
+   "id": "UsageScenario",
+   "layer": "TO_BE",
+   "ko": "사용 장면",
+   "properties": [],
+   "definition": "사용자가 특정 상황에서 수행하는 사용 장면.",
+   "identity": "사용자·발생 조건·목적으로 구별한다."
+  },
+  "Screen": {
+   "id": "Screen",
+   "layer": "TO_BE",
+   "ko": "화면",
+   "properties": [],
+   "definition": "사용자가 정보를 보고 조작하는 화면.",
+   "identity": "화면 경로·주요 작업으로 구별한다."
+  },
+  "DataRequirement": {
+   "id": "DataRequirement",
+   "layer": "DATA_SYSTEM",
+   "ko": "필요 데이터",
+   "properties": [
+    {
+     "id": "sourceSystem",
+     "ko": "출처 시스템",
+     "required": true
+    },
+    {
+     "id": "unit",
+     "ko": "단위",
+     "required": false
+    },
+    {
+     "id": "timing",
+     "ko": "발생·수집 시점",
+     "required": false
+    },
+    {
+     "id": "joinKey",
+     "ko": "연결 기준",
+     "required": false
+    },
+    {
+     "id": "owner",
+     "ko": "책임자",
+     "required": false
+    },
+    {
+     "id": "availability",
+     "ko": "보유 여부",
+     "required": false
+    },
+    {
+     "id": "collectionMethod",
+     "ko": "수집 방법",
+     "required": false
+    }
+   ],
+   "definition": "요구사항을 충족하는 데 필요한 데이터 묶음.",
+   "identity": "활용 목적·출처·대상·한 행의 단위로 구별한다."
+  },
+  "DataItem": {
+   "id": "DataItem",
+   "layer": "DATA_SYSTEM",
+   "ko": "데이터 항목",
+   "properties": [
+    {
+     "id": "unit",
+     "ko": "단위",
+     "required": false
+    },
+    {
+     "id": "grain",
+     "ko": "한 줄의 단위",
+     "required": false
+    },
+    {
+     "id": "frequency",
+     "ko": "기록 주기",
+     "required": false
+    }
+   ],
+   "definition": "데이터를 구성하는 개별 항목.",
+   "identity": "출처·태그/열 식별자·측정 대상으로 구별한다."
+  },
+  "System": {
+   "id": "System",
+   "layer": "DATA_SYSTEM",
+   "ko": "시스템",
+   "properties": [
+    {
+     "id": "systemId",
+     "ko": "시스템 식별자",
+     "required": false
+    },
+    {
+     "id": "interface",
+     "ko": "연결 방식",
+     "required": false
+    }
+   ],
+   "definition": "업무나 데이터 처리를 수행하는 시스템.",
+   "identity": "운영 주체·인스턴스·시스템 식별자로 구별한다."
+  },
+  "Decision": {
+   "id": "Decision",
+   "layer": "DECISION",
+   "ko": "결정",
+   "properties": [
+    {
+     "id": "rationale",
+     "ko": "결정 이유",
+     "required": true
+    },
+    {
+     "id": "alternatives",
+     "ko": "검토한 대안",
+     "required": false
+    },
+    {
+     "id": "decidedBy",
+     "ko": "결정자",
+     "required": false
+    },
+    {
+     "id": "decidedAt",
+     "ko": "결정 시점",
+     "required": false
+    }
+   ],
+   "definition": "근거와 이유를 가지고 채택한 판단.",
+   "identity": "결정 대상·결정 시점·내용으로 구별한다."
+  },
+  "Constraint": {
+   "id": "Constraint",
+   "layer": "DECISION",
+   "ko": "제약",
+   "properties": [
+    {
+     "id": "condition",
+     "ko": "적용 조건",
+     "required": false
+    }
+   ],
+   "definition": "수행을 제한하는 조건.",
+   "identity": "적용 대상·기간·제한 내용으로 구별한다."
+  },
+  "Assumption": {
+   "id": "Assumption",
+   "layer": "DECISION",
+   "ko": "전제",
+   "properties": [
+    {
+     "id": "condition",
+     "ko": "성립 조건",
+     "required": false
+    }
+   ],
+   "definition": "확인 전 참으로 두고 진행하는 전제.",
+   "identity": "전제 대상·성립 조건으로 구별한다."
+  },
+  "Process": {
+   "id": "Process",
+   "layer": "SCOPE",
+   "ko": "공정",
+   "properties": [
+    {
+     "id": "processCode",
+     "ko": "공정 코드",
+     "required": false
+    },
+    {
+     "id": "line",
+     "ko": "라인",
+     "required": false
+    }
+   ],
+   "definition": "작업·변환이 수행되는 공정.",
+   "identity": "사업장·라인·공정 코드로 구별한다."
+  },
+  "Asset": {
+   "id": "Asset",
+   "layer": "SCOPE",
+   "ko": "설비",
+   "properties": [
+    {
+     "id": "assetCode",
+     "ko": "설비 코드",
+     "required": false
+    },
+    {
+     "id": "location",
+     "ko": "설치 위치",
+     "required": false
+    }
+   ],
+   "definition": "실제로 식별하고 관리하는 설비.",
+   "identity": "설비 코드·일련번호·설치 위치로 구별한다."
+  }
+ },
+ "relation_types": {
+  "BLOCKS": {
+   "type": "BLOCKS",
+   "from_types": [
+    "Problem"
+   ],
+   "to_types": [
+    "Goal",
+    "Process"
+   ],
+   "ko": "막힌 대상",
+   "inverse_ko": "걸림돌",
+   "verb_ko": "막는다",
+   "category": "semantic",
+   "assertion_terms": [
+    "막",
+    "방해",
+    "저해"
+   ],
+   "definition": ""
+  },
+  "CAUSES": {
+   "type": "CAUSES",
+   "from_types": [
+    "CurrentPractice"
+   ],
+   "to_types": [
+    "Problem"
+   ],
+   "ko": "일으키는 문제",
+   "inverse_ko": "원인",
+   "verb_ko": "일으킨다",
+   "category": "semantic",
+   "assertion_terms": [
+    "원인",
+    "때문에",
+    "유발",
+    "초래",
+    "일으"
+   ],
+   "definition": ""
+  },
+  "USES": {
+   "type": "USES",
+   "from_types": [
+    "CurrentPractice"
+   ],
+   "to_types": [
+    "System",
+    "DataRequirement"
+   ],
+   "ko": "사용 대상",
+   "inverse_ko": "사용처",
+   "verb_ko": "쓴다",
+   "category": "semantic",
+   "assertion_terms": [
+    "사용",
+    "활용",
+    "쓴다"
+   ],
+   "definition": ""
+  },
+  "ADDRESSES": {
+   "type": "ADDRESSES",
+   "from_types": [
+    "Requirement",
+    "Capability"
+   ],
+   "to_types": [
+    "Problem"
+   ],
+   "ko": "해결할 문제",
+   "inverse_ko": "해결 수단",
+   "verb_ko": "해결한다",
+   "category": "semantic",
+   "assertion_terms": [
+    "해결",
+    "대응",
+    "개선"
+   ],
+   "definition": ""
+  },
+  "DELIVERS": {
+   "type": "DELIVERS",
+   "from_types": [
+    "Requirement",
+    "Capability"
+   ],
+   "to_types": [
+    "Goal"
+   ],
+   "ko": "기여 목표",
+   "inverse_ko": "기여 항목",
+   "verb_ko": "기여한다",
+   "category": "semantic",
+   "assertion_terms": [
+    "기여",
+    "달성"
+   ],
+   "definition": ""
+  },
+  "NEEDS": {
+   "type": "NEEDS",
+   "from_types": [
+    "Requirement",
+    "Capability"
+   ],
+   "to_types": [
+    "DataRequirement"
+   ],
+   "ko": "필요 데이터",
+   "inverse_ko": "활용처",
+   "verb_ko": "필요로 한다",
+   "category": "semantic",
+   "assertion_terms": [
+    "필요",
+    "요구"
+   ],
+   "definition": ""
+  },
+  "PROVIDED_BY": {
+   "type": "PROVIDED_BY",
+   "from_types": [
+    "DataRequirement"
+   ],
+   "to_types": [
+    "System"
+   ],
+   "ko": "데이터 출처",
+   "inverse_ko": "제공 데이터",
+   "verb_ko": "에서 나온다",
+   "category": "semantic",
+   "assertion_terms": [
+    "제공",
+    "수집",
+    "추출",
+    "가져",
+    "출처"
+   ],
+   "definition": ""
+  },
+  "MEASURES": {
+   "type": "MEASURES",
+   "from_types": [
+    "KPI"
+   ],
+   "to_types": [
+    "Goal",
+    "Process"
+   ],
+   "ko": "측정 대상",
+   "inverse_ko": "측정 기준",
+   "verb_ko": "잰다",
+   "category": "semantic",
+   "assertion_terms": [
+    "측정",
+    "지표",
+    "평가"
+   ],
+   "definition": ""
+  },
+  "IMPACTS": {
+   "type": "IMPACTS",
+   "from_types": [
+    "Problem"
+   ],
+   "to_types": [
+    "Impact"
+   ],
+   "ko": "영향",
+   "inverse_ko": "원인 문제",
+   "verb_ko": "영향을 준다",
+   "category": "semantic",
+   "assertion_terms": [
+    "영향",
+    "악화"
+   ],
+   "definition": ""
+  },
+  "REALIZES": {
+   "type": "REALIZES",
+   "from_types": [
+    "SolutionDirection",
+    "Solution"
+   ],
+   "to_types": [
+    "Requirement",
+    "Capability"
+   ],
+   "ko": "실현 대상",
+   "inverse_ko": "실현 방안",
+   "verb_ko": "실현한다",
+   "category": "semantic",
+   "assertion_terms": [
+    "실현",
+    "구현"
+   ],
+   "definition": ""
+  },
+  "FOLLOWS": {
+   "type": "FOLLOWS",
+   "from_types": [
+    "Solution"
+   ],
+   "to_types": [
+    "SolutionDirection"
+   ],
+   "ko": "따르는 방향",
+   "inverse_ko": "적용 후보",
+   "verb_ko": "따른다",
+   "category": "semantic",
+   "assertion_terms": [
+    "따르",
+    "적용"
+   ],
+   "definition": ""
+  },
+  "CONSTRAINS": {
+   "type": "CONSTRAINS",
+   "from_types": [
+    "Constraint"
+   ],
+   "to_types": [
+    "Goal",
+    "Requirement",
+    "Capability",
+    "Solution",
+    "SolutionDirection",
+    "System",
+    "Process"
+   ],
+   "ko": "제약 대상",
+   "inverse_ko": "제약",
+   "verb_ko": "제약한다",
+   "category": "semantic",
+   "assertion_terms": [
+    "제약",
+    "제한"
+   ],
+   "definition": ""
+  },
+  "OWNS": {
+   "type": "OWNS",
+   "from_types": [
+    "Stakeholder"
+   ],
+   "to_types": [
+    "Problem",
+    "Requirement",
+    "DataRequirement",
+    "System",
+    "Decision",
+    "Process",
+    "Asset"
+   ],
+   "ko": "담당 항목",
+   "inverse_ko": "담당자",
+   "verb_ko": "담당한다",
+   "category": "semantic",
+   "assertion_terms": [
+    "담당",
+    "책임"
+   ],
+   "definition": ""
+  },
+  "AFFECTS": {
+   "type": "AFFECTS",
+   "from_types": [
+    "Decision"
+   ],
+   "to_types": [
+    "Goal",
+    "Problem",
+    "Requirement",
+    "Capability",
+    "DataRequirement",
+    "System",
+    "Process"
+   ],
+   "ko": "영향 대상",
+   "inverse_ko": "관련 결정",
+   "verb_ko": "바꾼다",
+   "category": "semantic",
+   "assertion_terms": [
+    "영향",
+    "변경"
+   ],
+   "definition": ""
+  },
+  "HAS_GOAL": {
+   "type": "HAS_GOAL",
+   "from_types": [
+    "Project"
+   ],
+   "to_types": [
+    "Goal"
+   ],
+   "ko": "목표",
+   "inverse_ko": "프로젝트",
+   "verb_ko": "목표로 둔다",
+   "category": "semantic",
+   "assertion_terms": [
+    "목표"
+   ],
+   "definition": ""
+  },
+  "HAS_SCOPE": {
+   "type": "HAS_SCOPE",
+   "from_types": [
+    "Project"
+   ],
+   "to_types": [
+    "Scope"
+   ],
+   "ko": "대상 범위",
+   "inverse_ko": "프로젝트",
+   "verb_ko": "범위로 둔다",
+   "category": "semantic",
+   "assertion_terms": [
+    "범위",
+    "대상"
+   ],
+   "definition": ""
+  },
+  "TARGETS": {
+   "type": "TARGETS",
+   "from_types": [
+    "Project"
+   ],
+   "to_types": [
+    "Product",
+    "System",
+    "Stakeholder",
+    "Process",
+    "Asset"
+   ],
+   "ko": "적용 대상",
+   "inverse_ko": "대상 프로젝트",
+   "verb_ko": "대상으로 한다",
+   "category": "semantic",
+   "assertion_terms": [
+    "대상",
+    "적용"
+   ],
+   "definition": ""
+  },
+  "ASSUMES": {
+   "type": "ASSUMES",
+   "from_types": [
+    "Project",
+    "Requirement",
+    "Solution"
+   ],
+   "to_types": [
+    "Assumption"
+   ],
+   "ko": "전제",
+   "inverse_ko": "전제한 항목",
+   "verb_ko": "전제로 한다",
+   "category": "semantic",
+   "assertion_terms": [
+    "전제",
+    "가정"
+   ],
+   "definition": ""
+  },
+  "INCLUDES": {
+   "type": "INCLUDES",
+   "from_types": [
+    "Scope"
+   ],
+   "to_types": [
+    "Product",
+    "System",
+    "Stakeholder",
+    "Process",
+    "Asset"
+   ],
+   "ko": "포함 항목",
+   "inverse_ko": "속한 범위",
+   "verb_ko": "포함한다",
+   "category": "composition",
+   "assertion_terms": [
+    "포함",
+    "구성"
+   ],
+   "definition": ""
+  },
+  "PARTICIPATES_IN": {
+   "type": "PARTICIPATES_IN",
+   "from_types": [
+    "Stakeholder"
+   ],
+   "to_types": [
+    "Project"
+   ],
+   "ko": "참여 프로젝트",
+   "inverse_ko": "참여자",
+   "verb_ko": "참여한다",
+   "category": "semantic",
+   "assertion_terms": [
+    "참여"
+   ],
+   "definition": ""
+  },
+  "OBSERVED_IN": {
+   "type": "OBSERVED_IN",
+   "from_types": [
+    "Observation"
+   ],
+   "to_types": [
+    "System",
+    "Product",
+    "Process",
+    "Asset"
+   ],
+   "ko": "발생 위치",
+   "inverse_ko": "관찰 현상",
+   "verb_ko": "에서 나타난다",
+   "category": "semantic",
+   "assertion_terms": [
+    "발생",
+    "관찰"
+   ],
+   "definition": ""
+  },
+  "INDICATES": {
+   "type": "INDICATES",
+   "from_types": [
+    "Observation"
+   ],
+   "to_types": [
+    "Problem"
+   ],
+   "ko": "가리키는 문제",
+   "inverse_ko": "징후",
+   "verb_ko": "드러낸다",
+   "category": "semantic",
+   "assertion_terms": [
+    "드러",
+    "징후",
+    "관찰"
+   ],
+   "definition": ""
+  },
+  "HURTS": {
+   "type": "HURTS",
+   "from_types": [
+    "Observation",
+    "Problem"
+   ],
+   "to_types": [
+    "KPI",
+    "Process"
+   ],
+   "ko": "악화 대상",
+   "inverse_ko": "악화 원인",
+   "verb_ko": "나쁘게 한다",
+   "category": "semantic",
+   "assertion_terms": [
+    "악화",
+    "저하"
+   ],
+   "definition": ""
+  },
+  "JUDGES": {
+   "type": "JUDGES",
+   "from_types": [
+    "CurrentPractice"
+   ],
+   "to_types": [
+    "KPI",
+    "Observation"
+   ],
+   "ko": "판단 대상",
+   "inverse_ko": "현재 판단",
+   "verb_ko": "판단한다",
+   "category": "semantic",
+   "assertion_terms": [
+    "판정",
+    "판단",
+    "검사"
+   ],
+   "definition": ""
+  },
+  "INFORMS": {
+   "type": "INFORMS",
+   "from_types": [
+    "KPI"
+   ],
+   "to_types": [
+    "Decision"
+   ],
+   "ko": "뒷받침하는 결정",
+   "inverse_ko": "판단 근거",
+   "verb_ko": "뒷받침한다",
+   "category": "semantic",
+   "assertion_terms": [
+    "근거",
+    "판단"
+   ],
+   "definition": ""
+  },
+  "APPLIED_IN": {
+   "type": "APPLIED_IN",
+   "from_types": [
+    "Decision",
+    "Requirement",
+    "Capability"
+   ],
+   "to_types": [
+    "UsageScenario"
+   ],
+   "ko": "적용 장면",
+   "inverse_ko": "적용 항목",
+   "verb_ko": "에 쓰인다",
+   "category": "semantic",
+   "assertion_terms": [
+    "적용",
+    "사용"
+   ],
+   "definition": ""
+  },
+  "USED_BY": {
+   "type": "USED_BY",
+   "from_types": [
+    "UsageScenario",
+    "Screen"
+   ],
+   "to_types": [
+    "Stakeholder"
+   ],
+   "ko": "사용자",
+   "inverse_ko": "사용 장면·화면",
+   "verb_ko": "을 쓰는 사람",
+   "category": "semantic",
+   "assertion_terms": [
+    "사용",
+    "사용자"
+   ],
+   "definition": ""
+  },
+  "SHOWN_ON": {
+   "type": "SHOWN_ON",
+   "from_types": [
+    "Requirement",
+    "Capability",
+    "KPI"
+   ],
+   "to_types": [
+    "Screen"
+   ],
+   "ko": "표시 화면",
+   "inverse_ko": "표시 항목",
+   "verb_ko": "에 표시된다",
+   "category": "semantic",
+   "assertion_terms": [
+    "표시",
+    "보여",
+    "화면"
+   ],
+   "definition": ""
+  },
+  "CONTAINS": {
+   "type": "CONTAINS",
+   "from_types": [
+    "DataRequirement"
+   ],
+   "to_types": [
+    "DataItem"
+   ],
+   "ko": "구성 항목",
+   "inverse_ko": "상위 데이터",
+   "verb_ko": "담는다",
+   "category": "composition",
+   "assertion_terms": [
+    "포함",
+    "구성"
+   ],
+   "definition": ""
+  },
+  "STORED_IN": {
+   "type": "STORED_IN",
+   "from_types": [
+    "DataItem"
+   ],
+   "to_types": [
+    "System"
+   ],
+   "ko": "저장 위치",
+   "inverse_ko": "저장 항목",
+   "verb_ko": "에 저장된다",
+   "category": "semantic",
+   "assertion_terms": [
+    "저장",
+    "보관"
+   ],
+   "definition": ""
+  },
+  "PERFORMED_IN": {
+   "type": "PERFORMED_IN",
+   "from_types": [
+    "CurrentPractice"
+   ],
+   "to_types": [
+    "Process"
+   ],
+   "ko": "수행 공정",
+   "inverse_ko": "작업 방식",
+   "verb_ko": "",
+   "category": "semantic",
+   "assertion_terms": [
+    "수행",
+    "진행"
+   ],
+   "definition": ""
+  },
+  "SUPPORTS": {
+   "type": "SUPPORTS",
+   "from_types": [
+    "System",
+    "Asset"
+   ],
+   "to_types": [
+    "Process"
+   ],
+   "ko": "지원 대상",
+   "inverse_ko": "지원 설비·시스템",
+   "verb_ko": "",
+   "category": "semantic",
+   "assertion_terms": [
+    "지원"
+   ],
+   "definition": ""
+  },
+  "PART_OF": {
+   "type": "PART_OF",
+   "from_types": [
+    "Process",
+    "Asset"
+   ],
+   "to_types": [
+    "Process"
+   ],
+   "ko": "상위 공정",
+   "inverse_ko": "하위 항목",
+   "verb_ko": "",
+   "category": "composition",
+   "assertion_terms": [
+    "소속",
+    "속하",
+    "구성",
+    "포함"
+   ],
+   "definition": ""
+  },
+  "PRODUCES": {
+   "type": "PRODUCES",
+   "from_types": [
+    "Process",
+    "Asset"
+   ],
+   "to_types": [
+    "Product"
+   ],
+   "ko": "산출물",
+   "inverse_ko": "생산 공정·설비",
+   "verb_ko": "",
+   "category": "semantic",
+   "assertion_terms": [
+    "생산",
+    "출력",
+    "산출"
+   ],
+   "definition": ""
+  }
+ },
+ "concepts": {
+  "recipe.standard_recipe": {
+   "id": "recipe.standard_recipe",
+   "pack": "recipe",
+   "entity_type": "DataRequirement",
+   "ko": "Standard Recipe",
+   "aliases": [
+    "기준 Recipe",
+    "표준 레시피",
+    "Recipe 기준값",
+    "레시피 설정 기준값"
+   ]
+  },
+  "recipe.set_recipe": {
+   "id": "recipe.set_recipe",
+   "pack": "recipe",
+   "entity_type": "DataRequirement",
+   "ko": "Set Recipe",
+   "aliases": [
+    "설정 Recipe",
+    "Set 값"
+   ]
+  },
+  "recipe.applied_recipe": {
+   "id": "recipe.applied_recipe",
+   "pack": "recipe",
+   "entity_type": "DataRequirement",
+   "ko": "Applied Recipe",
+   "aliases": [
+    "적용 Recipe",
+    "설비 적용 Recipe",
+    "Recipe Actual"
+   ]
+  },
+  "recipe.actual_process_value": {
+   "id": "recipe.actual_process_value",
+   "pack": "recipe",
+   "entity_type": "DataRequirement",
+   "ko": "Actual Process Value",
+   "aliases": [
+    "실측값",
+    "공정 실적값"
+   ]
+  },
+  "recipe.recipe_version": {
+   "id": "recipe.recipe_version",
+   "pack": "recipe",
+   "entity_type": "DataRequirement",
+   "ko": "Recipe Version",
+   "aliases": [
+    "레시피 버전"
+   ]
+  },
+  "recipe.applied_timestamp": {
+   "id": "recipe.applied_timestamp",
+   "pack": "recipe",
+   "entity_type": "DataRequirement",
+   "ko": "Applied Timestamp",
+   "aliases": [
+    "적용시각",
+    "적용 시점"
+   ]
+  },
+  "recipe.comparison_rule": {
+   "id": "recipe.comparison_rule",
+   "pack": "recipe",
+   "entity_type": "Requirement",
+   "ko": "비교 기준·Tolerance",
+   "aliases": [
+    "Tolerance",
+    "허용 오차",
+    "비교 규칙"
+   ]
+  },
+  "recipe.mismatch_action": {
+   "id": "recipe.mismatch_action",
+   "pack": "recipe",
+   "entity_type": "Requirement",
+   "ko": "Mismatch 대응",
+   "aliases": [
+    "불일치 대응",
+    "Mismatch Action"
+   ]
+  },
+  "recipe.cim": {
+   "id": "recipe.cim",
+   "pack": "recipe",
+   "entity_type": "System",
+   "ko": "CIM",
+   "aliases": [
+    "CIM"
+   ]
+  },
+  "recipe.mes": {
+   "id": "recipe.mes",
+   "pack": "recipe",
+   "entity_type": "System",
+   "ko": "MES",
+   "aliases": [
+    "MES"
+   ]
+  },
+  "recipe.plc": {
+   "id": "recipe.plc",
+   "pack": "recipe",
+   "entity_type": "System",
+   "ko": "PLC",
+   "aliases": [
+    "PLC"
+   ]
+  },
+  "recipe.rms": {
+   "id": "recipe.rms",
+   "pack": "recipe",
+   "entity_type": "System",
+   "ko": "RMS",
+   "aliases": [
+    "RMS",
+    "Recipe Management System"
+   ]
+  },
+  "digital_twin.asset_hierarchy": {
+   "id": "digital_twin.asset_hierarchy",
+   "pack": "digital_twin",
+   "entity_type": "Asset",
+   "ko": "Asset Hierarchy",
+   "aliases": [
+    "설비 구성",
+    "Asset 구조"
+   ]
+  },
+  "digital_twin.geometry_3d": {
+   "id": "digital_twin.geometry_3d",
+   "pack": "digital_twin",
+   "entity_type": "DataRequirement",
+   "ko": "3D Geometry",
+   "aliases": [
+    "3D CAD",
+    "3D 모델",
+    "외형 정보"
+   ]
+  },
+  "digital_twin.sequence": {
+   "id": "digital_twin.sequence",
+   "pack": "digital_twin",
+   "entity_type": "DataRequirement",
+   "ko": "Sequence",
+   "aliases": [
+    "동작 순서",
+    "시퀀스"
+   ]
+  },
+  "digital_twin.state": {
+   "id": "digital_twin.state",
+   "pack": "digital_twin",
+   "entity_type": "DataRequirement",
+   "ko": "State / Event",
+   "aliases": [
+    "설비 상태",
+    "상태 데이터",
+    "Event"
+   ]
+  },
+  "digital_twin.position": {
+   "id": "digital_twin.position",
+   "pack": "digital_twin",
+   "entity_type": "DataRequirement",
+   "ko": "Position / 좌표",
+   "aliases": [
+    "위치",
+    "좌표",
+    "Robot 좌표",
+    "Axis 좌표"
+   ]
+  },
+  "data_standardization.raw_field": {
+   "id": "data_standardization.raw_field",
+   "pack": "data_standardization",
+   "entity_type": "DataRequirement",
+   "ko": "Raw Data Field",
+   "aliases": [
+    "원천 필드",
+    "Raw Field",
+    "원시 데이터"
+   ]
+  },
+  "data_standardization.standard_field": {
+   "id": "data_standardization.standard_field",
+   "pack": "data_standardization",
+   "entity_type": "DataRequirement",
+   "ko": "Standard Data Field",
+   "aliases": [
+    "표준 필드",
+    "표준 데이터 항목"
+   ]
+  },
+  "data_standardization.unit": {
+   "id": "data_standardization.unit",
+   "pack": "data_standardization",
+   "entity_type": "DataRequirement",
+   "ko": "Unit",
+   "aliases": [
+    "단위"
+   ]
+  },
+  "data_standardization.timestamp": {
+   "id": "data_standardization.timestamp",
+   "pack": "data_standardization",
+   "entity_type": "DataRequirement",
+   "ko": "Timestamp",
+   "aliases": [
+    "시각",
+    "타임스탬프"
+   ]
+  },
+  "data_standardization.join_key": {
+   "id": "data_standardization.join_key",
+   "pack": "data_standardization",
+   "entity_type": "DataRequirement",
+   "ko": "Join Key",
+   "aliases": [
+    "연결 키",
+    "LOT Join",
+    "조인 기준"
+   ]
+  },
+  "data_standardization.semantic_authority": {
+   "id": "data_standardization.semantic_authority",
+   "pack": "data_standardization",
+   "entity_type": "Decision",
+   "ko": "Semantic Authority",
+   "aliases": [
+    "의미 권위",
+    "표준 승인 주체"
+   ]
+  }
+ },
+ "questions": [
+  {
+   "id": "manufacturing.goal_kpi",
+   "pack": "manufacturing",
+   "text": "목표 KPI는 무엇인가?",
+   "targets": [
+    "Goal"
+   ]
+  },
+  {
+   "id": "manufacturing.target_process",
+   "pack": "manufacturing",
+   "text": "대상 공정은 무엇인가?",
+   "targets": [
+    "Process"
+   ]
+  },
+  {
+   "id": "manufacturing.target_equipment",
+   "pack": "manufacturing",
+   "text": "대상 설비는 무엇인가?",
+   "targets": [
+    "Asset"
+   ]
+  },
+  {
+   "id": "manufacturing.product_model",
+   "pack": "manufacturing",
+   "text": "대상 제품 / Model은 무엇인가?",
+   "targets": [
+    "Asset",
+    "Process"
+   ]
+  },
+  {
+   "id": "manufacturing.current_flow",
+   "pack": "manufacturing",
+   "text": "현재 업무 Flow는 어떻게 되는가?",
+   "targets": [
+    "Process",
+    "CurrentPractice"
+   ]
+  },
+  {
+   "id": "manufacturing.key_systems",
+   "pack": "manufacturing",
+   "text": "주요 시스템은 무엇인가?",
+   "targets": [
+    "System"
+   ]
+  },
+  {
+   "id": "manufacturing.data_flow",
+   "pack": "manufacturing",
+   "text": "데이터 흐름은 어떻게 되는가?",
+   "targets": [
+    "DataRequirement",
+    "System",
+    "CurrentPractice"
+   ]
+  },
+  {
+   "id": "manufacturing.owners",
+   "pack": "manufacturing",
+   "text": "주요 사용자와 Owner는 누구인가?",
+   "targets": [
+    "Process",
+    "System"
+   ]
+  },
+  {
+   "id": "manufacturing.current_problems",
+   "pack": "manufacturing",
+   "text": "현재 문제는 무엇인가?",
+   "targets": [
+    "Problem"
+   ]
+  },
+  {
+   "id": "manufacturing.success_criteria",
+   "pack": "manufacturing",
+   "text": "성공 기준은 무엇인가?",
+   "targets": [
+    "Goal",
+    "Requirement"
+   ]
+  },
+  {
+   "id": "manufacturing.constraints",
+   "pack": "manufacturing",
+   "text": "보안·안전 제약은 무엇인가?",
+   "targets": [
+    "Requirement",
+    "Decision"
+   ]
+  },
+  {
+   "id": "recipe.standard_authority",
+   "pack": "recipe",
+   "text": "기준 Recipe는 어디에서 관리되는가?",
+   "targets": [
+    "DataRequirement",
+    "System"
+   ]
+  },
+  {
+   "id": "recipe.actual_source",
+   "pack": "recipe",
+   "text": "실제 설비 적용값은 어디서 읽는가?",
+   "targets": [
+    "DataRequirement",
+    "System"
+   ]
+  },
+  {
+   "id": "recipe.set_vs_actual",
+   "pack": "recipe",
+   "text": "Set과 Actual은 구분되는가?",
+   "targets": [
+    "DataRequirement"
+   ]
+  },
+  {
+   "id": "recipe.version_exists",
+   "pack": "recipe",
+   "text": "Recipe Version이 존재하는가?",
+   "targets": [
+    "DataRequirement"
+   ]
+  },
+  {
+   "id": "recipe.applied_timestamp",
+   "pack": "recipe",
+   "text": "적용시점은 저장되는가?",
+   "targets": [
+    "DataRequirement"
+   ]
+  },
+  {
+   "id": "recipe.join_identity",
+   "pack": "recipe",
+   "text": "어떤 ID로 제품·설비와 연결되는가?",
+   "targets": [
+    "DataRequirement"
+   ]
+  },
+  {
+   "id": "recipe.tolerance",
+   "pack": "recipe",
+   "text": "Mismatch의 허용기준은 무엇인가?",
+   "targets": [
+    "Requirement"
+   ]
+  },
+  {
+   "id": "recipe.mismatch_action",
+   "pack": "recipe",
+   "text": "Mismatch 발견 시 행동은 무엇인가?",
+   "targets": [
+    "Requirement"
+   ]
+  },
+  {
+   "id": "digital_twin.target_asset",
+   "pack": "digital_twin",
+   "text": "대상 Asset은 무엇인가?",
+   "targets": [
+    "Asset"
+   ]
+  },
+  {
+   "id": "digital_twin.exterior_or_internal",
+   "pack": "digital_twin",
+   "text": "외형만 필요한가, 내부 구성까지 필요한가?",
+   "targets": [
+    "Requirement",
+    "DataRequirement"
+   ]
+  },
+  {
+   "id": "digital_twin.cad_exists",
+   "pack": "digital_twin",
+   "text": "3D CAD가 있는가?",
+   "targets": [
+    "DataRequirement"
+   ]
+  },
+  {
+   "id": "digital_twin.state_event_data",
+   "pack": "digital_twin",
+   "text": "State/Event 데이터가 있는가?",
+   "targets": [
+    "DataRequirement"
+   ]
+  },
+  {
+   "id": "digital_twin.sequence_exists",
+   "pack": "digital_twin",
+   "text": "Sequence가 있는가?",
+   "targets": [
+    "DataRequirement"
+   ]
+  },
+  {
+   "id": "digital_twin.realtime_sync",
+   "pack": "digital_twin",
+   "text": "Start-End만 필요한가, 실시간 위치 동기화가 필요한가?",
+   "targets": [
+    "Requirement"
+   ]
+  },
+  {
+   "id": "digital_twin.coordinate_feed",
+   "pack": "digital_twin",
+   "text": "좌표·속도 데이터를 받을 수 있는가?",
+   "targets": [
+    "DataRequirement",
+    "System"
+   ]
+  },
+  {
+   "id": "data_standardization.asset_identity",
+   "pack": "data_standardization",
+   "text": "Asset Identity는 무엇으로 식별하는가?",
+   "targets": [
+    "Asset",
+    "DataRequirement"
+   ]
+  },
+  {
+   "id": "data_standardization.raw_meaning",
+   "pack": "data_standardization",
+   "text": "Raw Field의 의미는 확인되었는가?",
+   "targets": [
+    "DataRequirement"
+   ]
+  },
+  {
+   "id": "data_standardization.unit_defined",
+   "pack": "data_standardization",
+   "text": "각 필드의 Unit은 정의되어 있는가?",
+   "targets": [
+    "DataRequirement"
+   ]
+  },
+  {
+   "id": "data_standardization.timestamp_source",
+   "pack": "data_standardization",
+   "text": "Timestamp의 기준(생성 주체·시각 의미)은 무엇인가?",
+   "targets": [
+    "DataRequirement"
+   ]
+  },
+  {
+   "id": "data_standardization.join_defined",
+   "pack": "data_standardization",
+   "text": "시스템 간 Join 기준은 무엇인가?",
+   "targets": [
+    "DataRequirement"
+   ]
+  },
+  {
+   "id": "data_standardization.semantic_authority",
+   "pack": "data_standardization",
+   "text": "표준 의미의 승인 권위는 누구인가?",
+   "targets": [
+    "Decision"
+   ]
+  }
+ ],
+ "promotion_rules": {
+  "recipe.applied_recipe": {
+   "concept": "recipe.applied_recipe",
+   "must_have": [
+    "evidence",
+    "sourceSystem"
+   ],
+   "should_have": [
+    "timing"
+   ]
+  }
+ },
+ "anchor_types": [
+  "Project",
+  "Goal",
+  "Problem",
+  "Process"
+ ],
+ "structural_gaps": [
+  {
+   "id": "core.goal_without_kpi",
+   "entity_type": "Goal",
+   "text": "성공을 무엇으로 판단할지 정해지지 않았습니다",
+   "action": "목표 달성을 잴 기준(수치·판정 방법)을 확인하십시오",
+   "relation": "MEASURES",
+   "direction": "incoming",
+   "other_types": [],
+   "property_id": "",
+   "ask_who": "고객 현장"
+  },
+  {
+   "id": "core.problem_without_cause",
+   "entity_type": "Problem",
+   "text": "이 문제가 왜 생기는지 확인되지 않았습니다",
+   "action": "지금 이 일을 어떻게 하고 있는지 현장에서 확인하십시오",
+   "relation": "CAUSES",
+   "direction": "incoming",
+   "other_types": [],
+   "property_id": "",
+   "ask_who": "고객 현장"
+  },
+  {
+   "id": "core.problem_without_requirement",
+   "entity_type": "Problem",
+   "text": "이 문제를 풀 요구사항이 아직 없습니다",
+   "action": "이 문제가 풀리려면 무엇이 가능해야 하는지 정하십시오",
+   "relation": "ADDRESSES",
+   "direction": "incoming",
+   "other_types": [],
+   "property_id": "",
+   "ask_who": "컨설턴트"
+  },
+  {
+   "id": "core.requirement_without_data",
+   "entity_type": "Requirement",
+   "text": "무엇으로 판단할지 정해지지 않았습니다",
+   "action": "이 요구사항을 판정하는 데 필요한 데이터를 확인하십시오",
+   "relation": "NEEDS",
+   "direction": "outgoing",
+   "other_types": [],
+   "property_id": "",
+   "ask_who": "컨설턴트"
+  },
+  {
+   "id": "core.requirement_without_goal",
+   "entity_type": "Requirement",
+   "text": "어느 목표에 기여하는지 연결되지 않았습니다",
+   "action": "이 요구사항이 무엇을 나아지게 하는지 확인하십시오",
+   "relation": "DELIVERS",
+   "direction": "outgoing",
+   "other_types": [],
+   "property_id": "",
+   "ask_who": "컨설턴트"
+  },
+  {
+   "id": "core.data_without_source_system",
+   "entity_type": "DataRequirement",
+   "text": "어디서 가져올지 확인되지 않았습니다",
+   "action": "출처 시스템과 담당자를 확인하십시오",
+   "relation": "",
+   "direction": "outgoing",
+   "other_types": [],
+   "property_id": "sourceSystem",
+   "ask_who": "고객 IT"
+  },
+  {
+   "id": "core.decision_without_rationale",
+   "entity_type": "Decision",
+   "text": "이 결정을 왜 내렸는지 적히지 않았습니다",
+   "action": "결정 이유와 검토한 대안을 회의록·결정자에게서 확인하십시오",
+   "relation": "",
+   "direction": "outgoing",
+   "other_types": [],
+   "property_id": "rationale",
+   "ask_who": "고객 현장"
+  },
+  {
+   "id": "core.decision_without_effect",
+   "entity_type": "Decision",
+   "text": "이 결정이 무엇에 영향을 주는지 연결되지 않았습니다",
+   "action": "이 결정으로 달라지는 목표·요구사항·데이터·시스템을 확인하십시오",
+   "relation": "AFFECTS",
+   "direction": "outgoing",
+   "other_types": [],
+   "property_id": "",
+   "ask_who": "컨설턴트"
+  },
+  {
+   "id": "core.data_without_timing",
+   "entity_type": "DataRequirement",
+   "text": "언제 생기고 언제 수집되는지 확인되지 않았습니다",
+   "action": "발생 시점과 수집 주기를 확인하십시오",
+   "relation": "",
+   "direction": "outgoing",
+   "other_types": [],
+   "property_id": "timing",
+   "ask_who": "고객 IT"
+  },
+  {
+   "id": "core.solution_without_requirement",
+   "entity_type": "Solution",
+   "text": "어떤 요구사항을 푸는지 연결되지 않았습니다",
+   "action": "이 방안이 해결하려는 요구사항을 확인하십시오",
+   "relation": "REALIZES",
+   "direction": "outgoing",
+   "other_types": [],
+   "property_id": "",
+   "ask_who": "컨설턴트"
+  },
+  {
+   "id": "core.observation_without_kpi",
+   "entity_type": "Observation",
+   "text": "이 현상이 어떤 성과 기준을 나쁘게 하는지 확인되지 않았습니다",
+   "action": "이 현상으로 나빠지는 지표(불량률·가동률 등)와 그 판단 방법을 확인하십시오",
+   "relation": "HURTS",
+   "direction": "outgoing",
+   "other_types": [],
+   "property_id": "",
+   "ask_who": "고객 현장"
+  },
+  {
+   "id": "core.observation_without_problem",
+   "entity_type": "Observation",
+   "text": "이 현상이 어떤 문제를 드러내는지 정리되지 않았습니다",
+   "action": "이 현상이 반복되는 이유와 그로 인해 어긋나는 업무를 정리하십시오",
+   "relation": "INDICATES",
+   "direction": "outgoing",
+   "other_types": [],
+   "property_id": "",
+   "ask_who": "컨설턴트"
+  },
+  {
+   "id": "core.kpi_without_judgment",
+   "entity_type": "KPI",
+   "text": "이 지표를 지금 무엇으로 판단하는지 확인되지 않았습니다",
+   "action": "지금 누가·어떤 기준으로·얼마나 자주 이 지표를 판단하는지 확인하십시오",
+   "relation": "JUDGES",
+   "direction": "incoming",
+   "other_types": [],
+   "property_id": "",
+   "ask_who": "고객 현장"
+  },
+  {
+   "id": "core.practice_without_data",
+   "entity_type": "CurrentPractice",
+   "text": "이 방식이 판단에 쓰는 데이터가 확인되지 않았습니다",
+   "action": "지금 판단에 쓰는 기록·측정값과 그것이 남는 곳을 확인하십시오",
+   "relation": "USES",
+   "direction": "outgoing",
+   "other_types": [
+    "DataRequirement"
+   ],
+   "property_id": "",
+   "ask_who": "고객 현장"
+  },
+  {
+   "id": "manufacturing.process_without_current_practice",
+   "entity_type": "Process",
+   "text": "이 공정에서 지금 어떻게 일하는지 확인되지 않았습니다",
+   "action": "현재 작업 방식을 현장에서 확인하십시오",
+   "relation": "PERFORMED_IN",
+   "direction": "incoming",
+   "other_types": [],
+   "property_id": "",
+   "ask_who": ""
+  },
+  {
+   "id": "manufacturing.process_without_asset",
+   "entity_type": "Process",
+   "text": "어떤 설비에서 이루어지는지 확인되지 않았습니다",
+   "action": "대상 설비와 호기를 확인하십시오",
+   "relation": "SUPPORTS",
+   "direction": "incoming",
+   "other_types": [
+    "Asset"
+   ],
+   "property_id": "",
+   "ask_who": ""
+  }
+ ],
+ "pack_titles": {
+  "core": "프로젝트 공통",
+  "manufacturing": "제조",
+  "recipe": "레시피",
+  "digital_twin": "디지털 트윈",
+  "data_standardization": "데이터 표준화"
+ },
+ "layers": [
+  {
+   "id": "GOAL",
+   "ko": "프로젝트 목표",
+   "definition": "이루려는 상태와 그것을 재는 기준",
+   "color": "#FACC15",
+   "color_light": "#B07A0B"
+  },
+  {
+   "id": "SCOPE",
+   "ko": "대상 범위",
+   "definition": "이번에 다루는 공정·설비·제품·시스템·사람",
+   "color": "#A78BFA",
+   "color_light": "#7C3AED"
+  },
+  {
+   "id": "CURRENT",
+   "ko": "현재 방식",
+   "definition": "지금 일하고 판단하는 방식",
+   "color": "#94A3B8",
+   "color_light": "#475569"
+  },
+  {
+   "id": "PROBLEM",
+   "ko": "핵심 문제",
+   "definition": "자료가 적은 현상과, 그것이 드러내는 목표를 막는 어긋남",
+   "color": "#F87171",
+   "color_light": "#DC2626"
+  },
+  {
+   "id": "TO_BE",
+   "ko": "필요 조건",
+   "definition": "문제가 풀리려면 가능해야 하는 것",
+   "color": "#34D399",
+   "color_light": "#059669"
+  },
+  {
+   "id": "DATA_SYSTEM",
+   "ko": "필요 데이터·시스템",
+   "definition": "판단에 쓸 데이터와 그것이 있는 곳",
+   "color": "#60A5FA",
+   "color_light": "#2563EB"
+  },
+  {
+   "id": "DECISION",
+   "ko": "결정·제약",
+   "definition": "정한 것, 지켜야 할 조건, 전제",
+   "color": "#F472B6",
+   "color_light": "#DB2777"
+  }
+ ],
+ "problem_chain": {
+  "anchor": "Problem",
+  "slots": [
+   {
+    "key": "observation",
+    "ko": "현상",
+    "required": true,
+    "via": [
+     {
+      "from_slot": "anchor",
+      "relation": "INDICATES",
+      "direction": "incoming",
+      "types": []
+     }
+    ]
+   },
+   {
+    "key": "kpi",
+    "ko": "지표",
+    "required": true,
+    "via": [
+     {
+      "from_slot": "observation",
+      "relation": "HURTS",
+      "direction": "outgoing",
+      "types": []
+     },
+     {
+      "from_slot": "anchor",
+      "relation": "HURTS",
+      "direction": "outgoing",
+      "types": []
+     }
+    ]
+   },
+   {
+    "key": "judgment",
+    "ko": "현재 판단",
+    "required": true,
+    "via": [
+     {
+      "from_slot": "kpi",
+      "relation": "JUDGES",
+      "direction": "incoming",
+      "types": []
+     },
+     {
+      "from_slot": "observation",
+      "relation": "JUDGES",
+      "direction": "incoming",
+      "types": []
+     },
+     {
+      "from_slot": "anchor",
+      "relation": "CAUSES",
+      "direction": "incoming",
+      "types": []
+     }
+    ]
+   },
+   {
+    "key": "dataInUse",
+    "ko": "판단에 쓰는 데이터",
+    "required": true,
+    "via": [
+     {
+      "from_slot": "judgment",
+      "relation": "USES",
+      "direction": "outgoing",
+      "types": [
+       "DataRequirement"
+      ]
+     }
+    ]
+   },
+   {
+    "key": "requirement",
+    "ko": "요구사항",
+    "required": false,
+    "via": [
+     {
+      "from_slot": "anchor",
+      "relation": "ADDRESSES",
+      "direction": "incoming",
+      "types": []
+     }
+    ]
+   },
+   {
+    "key": "dataNeeded",
+    "ko": "개선에 필요한 데이터",
+    "required": false,
+    "via": [
+     {
+      "from_slot": "requirement",
+      "relation": "NEEDS",
+      "direction": "outgoing",
+      "types": []
+     }
+    ]
+   },
+   {
+    "key": "goal",
+    "ko": "목표",
+    "required": false,
+    "via": [
+     {
+      "from_slot": "anchor",
+      "relation": "BLOCKS",
+      "direction": "outgoing",
+      "types": []
+     },
+     {
+      "from_slot": "kpi",
+      "relation": "MEASURES",
+      "direction": "outgoing",
+      "types": []
+     }
+    ]
+   }
+  ]
+ },
+ "problem_statement_template": {
+  "title": "문제 정의서",
+  "sections": [
+   {
+    "key": "scope",
+    "ko": "분석 범위",
+    "guide": "이 문제가 걸린 대상(공정·설비·제품·시스템)과 고리 항목의 범위를 두세 문장으로 적습니다."
+   },
+   {
+    "key": "asIs",
+    "ko": "As-Is 근거",
+    "guide": "확인된 현상, 그것이 나쁘게 하는 지표, 지금의 판단 방식과 그 판단에 쓰는 데이터를 근거 번호와 함께 적습니다."
+   },
+   {
+    "key": "toBe",
+    "ko": "To-Be",
+    "guide": "자료가 뒷받침하는 목표 상태와 요구사항만 적습니다. 목표값이 자료에 없으면 확인 필요로 남깁니다."
+   },
+   {
+    "key": "gapTasks",
+    "ko": "Gap과 핵심 과제",
+    "guide": "As-Is와 To-Be 사이에 빠진 요구사항·데이터·판단 기준을 구분해 적습니다."
+   },
+   {
+    "key": "unknowns",
+    "ko": "확인 필요",
+    "guide": "근거가 부족한 판단과 빈 고리 자리를 현장에서 확인할 질문으로 적습니다."
+   }
+  ]
+ },
+ "_source": {
+  "repo": "INTERX-Problem-Map-Studio",
+  "commit": "3973709e",
+  "packs": [
+   "core",
+   "manufacturing",
+   "recipe",
+   "digital_twin",
+   "data_standardization"
+  ]
+ }
+}
